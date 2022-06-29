@@ -7,6 +7,10 @@
   margin-left: 20px;
 }
 
-.toolbar_button {
-  color: white;
+a,
+a:hover,
+a:focus,
+a:active {
+  text-decoration: none;
+  color: white !important;
 }

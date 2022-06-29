@@ -1,9 +1,8 @@
 import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import DangerLabel from "../common/components/DangerLabel"
 import Form from "../common/components/Form"
 import FormAcceptButton from "../common/components/FormAcceptButton"
-import FormButton from "../common/components/FormButton"
 import FormButtonBar from "../common/components/FormButtonBar"
 import FormInput from "../common/components/FormInput"
 import FormPassword from "../common/components/FormPassword"
@@ -14,7 +13,7 @@ import "../styles.css"
 import { login } from "./userService"
 
 export default function Login() {
-    const history = useNavigate()
+    const navigate = useNavigate()
     const [userName, setUserName] = useState("")
     const [password, setPassword] = useState("")
 
@@ -23,7 +22,7 @@ export default function Login() {
     const loginClick = async () => {
         errorHandler.cleanRestValidations()
         if (!userName) {
-            errorHandler.addError("login", "No puede estar vacío")
+            errorHandler.addError("userName", "No puede estar vacío")
         }
         if (!password) {
             errorHandler.addError("password", "No puede estar vacío")
@@ -34,10 +33,10 @@ export default function Login() {
 
         try {
             await login({
-                login: userName,
+                username: userName,
                 password
             })
-            history('/')
+            navigate("/menu")
         } catch (error) {
             errorHandler.processRestValidations(error)
         }
@@ -45,7 +44,7 @@ export default function Login() {
 
     return (
         <GlobalContent>
-            <FormTitle>Login</FormTitle>
+            <FormTitle>Iniciar Sesion</FormTitle>
 
             <Form>
                 <FormInput
@@ -55,7 +54,7 @@ export default function Login() {
                     onChange={(event) => setUserName(event.target.value)} />
 
                 <FormPassword
-                    label="Password"
+                    label="Contraseña"
                     name="password"
                     errorHandler={errorHandler}
                     onChange={(event) => setPassword(event.target.value)} />
@@ -63,9 +62,9 @@ export default function Login() {
                 <DangerLabel message={errorHandler.errorMessage} />
 
                 <FormButtonBar>
-                    <FormAcceptButton label="Login" onClick={loginClick} />
-                    <FormButton label="Cancelar" onClick={() => history('/')} />
-                </FormButtonBar>
+                    <FormAcceptButton label="Iniciar sesion" onClick={loginClick} />
+                </FormButtonBar><br></br>
+                <text>¿No estas registrado?</text><NavLink to="/newUser"><button className="btn info">Registrate</button></NavLink>
             </Form >
         </GlobalContent >
     )

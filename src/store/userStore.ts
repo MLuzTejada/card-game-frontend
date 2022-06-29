@@ -14,7 +14,6 @@ export function useSessionUser() {
       setUser(newState)
     })
   }, [])
-
   return user
 }
 

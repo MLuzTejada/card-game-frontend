@@ -1,9 +1,8 @@
 import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import DangerLabel from "../common/components/DangerLabel"
 import Form from "../common/components/Form"
 import FormAcceptButton from "../common/components/FormAcceptButton"
-import FormButton from "../common/components/FormButton"
 import FormButtonBar from "../common/components/FormButtonBar"
 import FormInput from "../common/components/FormInput"
 import FormPassword from "../common/components/FormPassword"
@@ -14,9 +13,8 @@ import "../styles.css"
 import { newUser } from "./userService"
 
 export default function Register() {
-  const history = useNavigate()
-  const [login, setLogin] = useState("")
-  const [name, setName] = useState("")
+  const navigate = useNavigate()
+  const [userName, setLogin] = useState("")
   const [password, setPassword] = useState("")
   const [password2, setPassword2] = useState("")
 
@@ -24,11 +22,8 @@ export default function Register() {
 
   const registerClick = async () => {
     errorHandler.cleanRestValidations()
-    if (!login) {
+    if (!userName) {
       errorHandler.addError("login", "No puede estar vacío")
-    }
-    if (!name) {
-      errorHandler.addError("name", "No puede estar vacío")
     }
     if (!password) {
       errorHandler.addError("password", "No puede estar vacío")
@@ -43,11 +38,10 @@ export default function Register() {
 
     try {
       await newUser({
-        login,
-        name,
+        username: userName,
         password,
       })
-      history("/")
+      navigate("/")
     } catch (error) {
       errorHandler.processRestValidations(error)
     }
@@ -55,27 +49,19 @@ export default function Register() {
 
   return (
     <GlobalContent>
-      <FormTitle>Registrar Usuario</FormTitle>
+      <FormTitle>Registrarse</FormTitle>
 
       <Form>
         <FormInput
-          label="Login"
-          name="login"
-          value={login}
+          label="Nombre de usuario"
+          name="userName"
+          value={userName}
           errorHandler={errorHandler}
           onChange={(e) => setLogin(e.target.value)}
         />
 
-        <FormInput
-          label="Usuario"
-          name="name"
-          value={name}
-          errorHandler={errorHandler}
-          onChange={(e) => setName(e.target.value)}
-        />
-
         <FormPassword
-          label="Password"
+          label="Contraseña"
           name="password"
           value={password}
           errorHandler={errorHandler}
@@ -83,7 +69,7 @@ export default function Register() {
         />
 
         <FormPassword
-          label="Repetir Password"
+          label="Repetir contraseña"
           name="password2"
           value={password2}
           errorHandler={errorHandler}
@@ -94,8 +80,8 @@ export default function Register() {
 
         <FormButtonBar>
           <FormAcceptButton label="Registrarse" onClick={registerClick} />
-          <FormButton label="Cancelar" onClick={() => history("/")} />
-        </FormButtonBar>
+        </FormButtonBar><br></br>
+        <text>¿Ya estas registrado?</text><NavLink to="/"><button className="btn info">Inicia sesión</button></NavLink>
       </Form>
     </GlobalContent>
   )

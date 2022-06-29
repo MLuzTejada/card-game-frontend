@@ -1,65 +1,56 @@
 import axios, { AxiosError } from "axios"
+import { useNavigate } from "react-router-dom"
 import { environment } from "../app/environment/environment"
 import { logout } from "../user/userService"
 
 interface Profile {
-  name: string
-  phone: string
+  username: string
   email: string
-  address: string
   province: string
-  picture: string
+  image: string
+  phone: string
 }
 
 export async function updateBasicInfo(params: {
-  name: string
-  phone: string
+  username: string
   email: string
-  address: string
-  province: string
-}): Promise<Profile> {
+  phone: string
+}, id: number): Promise<Profile> {
   try {
     const res = (
-      await axios.post(environment.backendUrl + "/v1/profile", params)
+      await axios.put(environment.backendUrl + `/player/${id}`, params)
     ).data as Profile
     return res
   } catch (err) {
     if ((err as AxiosError).code === "401") {
-      void logout()
+      void logout(id)
     }
     throw err
   }
 }
 
 interface UpdateProfileImageId {
-  id: string
+  image_url: string
 }
 
-export async function updateProfilePicture(params: {
-  image: string
-}): Promise<UpdateProfileImageId> {
+export async function updateProfilePicture(params: any, id: number): Promise<UpdateProfileImageId> {
+  // eslint-disable-next-line no-console
+  console.log("image: ", params)
   return (
-    await axios.post(environment.backendUrl + "/v1/profile/picture", params)
+    await axios.put(environment.backendUrl + `/player/${id}/image`, params)
   ).data as UpdateProfileImageId
 }
 
 export async function getCurrentProfile(): Promise<Profile> {
+  const navigate = useNavigate()
   try {
-    return (await axios.get(environment.backendUrl + "/v1/profile"))
+    return (await axios.get(environment.backendUrl + "player/current"))
       .data as Profile
   } catch (err) {
     const axiosError = err as AxiosError
     if (axiosError.response && axiosError.response.status === 401) {
-      void logout()
+      navigate("/")
     }
     throw err
-  }
-}
-
-export function getPictureUrl(id: string) {
-  if (id && id.length > 0) {
-    return environment.backendUrl + "/v1/image/" + id
-  } else {
-    return "/assets/profile.png"
   }
 }

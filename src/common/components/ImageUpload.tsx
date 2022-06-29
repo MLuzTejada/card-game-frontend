@@ -45,3 +45,4 @@ function getBase64(file: File, cb: (image: string) => void) {
     cb(reader.result as string)
   }
 }
+

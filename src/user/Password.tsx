@@ -7,13 +7,14 @@ import FormButton from "../common/components/FormButton"
 import FormButtonBar from "../common/components/FormButtonBar"
 import FormPassword from "../common/components/FormPassword"
 import FormTitle from "../common/components/FormTitle"
-import GlobalContent from "../common/components/GlobalContent"
 import { useErrorHandler } from "../common/utils/ErrorHandler"
+import { useSessionUser } from "../store/userStore"
 import "../styles.css"
 import { changePassword } from "./userService"
 
 
 export default function Password() {
+    const user = useSessionUser()
     const history = useNavigate()
     const [currentPassword, setCurrentPassword] = useState("")
     const [newPassword, setNewPassword] = useState("")
@@ -39,18 +40,19 @@ export default function Password() {
         }
 
         try {
-            await changePassword({
-                currentPassword,
-                newPassword
-            })
-            history("/")
+            if(user){
+                await changePassword({
+                    password: newPassword
+                }, user.id)
+            }
         } catch (error) {
+            errorHandler.addError("newPassword", "La contraseña debe cumplir con el formato")
             errorHandler.processRestValidations(error)
         }
     }
 
     return (
-        <GlobalContent>
+        <div>
             <FormTitle>Cambiar Password</FormTitle>
 
             <Form>
@@ -79,6 +81,6 @@ export default function Password() {
                     <FormButton label="Cancelar" onClick={() => history("/")} />
                 </FormButtonBar>
             </Form >
-        </GlobalContent>
+        </div>
     )
 }
